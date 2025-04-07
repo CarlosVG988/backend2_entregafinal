@@ -1,7 +1,22 @@
-import TicketRepository from "../dao/repositories/ticket.repository.js";
+import { TicketRepository } from '../dao/repositories/ticket.repository.js';
 
-const ticketRepository = new TicketRepository();
+export class TicketService {
+  constructor() {
+    this.repository = new TicketRepository();
+  }
 
-export const generateTicket = async (userId, cartItems) => {
-    return await ticketRepository.create({ userId, cartItems });
-};
+  // Crear ticket (después de comprar)
+  async createTicket(amount, purchaser) {
+    const ticketData = {
+      code: this.repository.generateCode(),
+      amount,
+      purchaser
+    };
+    return await this.repository.create(ticketData);
+  }
+
+  // Obtener tickets de un usuario
+  async getTicketsByEmail(email) {
+    return await this.repository.findByPurchaser(email);
+  }
+}
